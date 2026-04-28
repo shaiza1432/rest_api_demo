@@ -1,0 +1,56 @@
+name: Build Flutter APK
+
+on:
+  # Trigger the workflow on push to main branch
+  push:
+    branches: [main]
+  # Also allow manual triggering from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # Step 1: Checkout your code from GitHub
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java (required for Android build)
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      # Step 3: Set up Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      # Step 4: Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Step 5: Run tests (optional - verify your code works)
+      - name: Run tests
+        run: flutter test
+
+      # Step 6: Clean any previous builds
+      - name: Clean build
+        run: flutter clean
+
+      # Step 7: Build release APK
+      - name: Build release APK
+        run: flutter build apk --release
+
+      # Step 8: Upload the APK as an artifact (downloadable from GitHub)
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
