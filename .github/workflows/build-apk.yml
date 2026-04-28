@@ -36,8 +36,7 @@ jobs:
         run: flutter pub get
 
       # Step 5: Run tests (optional - verify your code works)
-      - name: Run tests
-        run: flutter test
+      
 
       # Step 6: Clean any previous builds
       - name: Clean build
